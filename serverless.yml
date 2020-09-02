@@ -1,0 +1,50 @@
+service: time
+provider:
+  name: aws
+  runtime: python3.8
+functions:
+  handler:
+    package:
+      artifact:
+    handler: handler.handler
+    events:
+      - http:
+          method: post
+          path: /site_load_timer
+          documentation:
+            summary: "Computes load time"
+            tags:
+              - "Computing time"
+            requestBody:
+              description: "There should be a list of strings (urls). for example: ['http://google.com', 'http://youtube.com', 'http://facebook.com']"
+            requestHeaders:
+              - name: "x-header"
+            methodResponses:
+              - statusCode: "200"
+                responseBody:
+                  description: "Returns 'url: time' pairs. In case of invalid url returns 'url: Invalid URL'"
+              - statusCode: "400"
+                responseBody:
+                  "application/json": "Bad request data. There should be a list of urls in POST request body."
+plugins:
+  - serverless-python-requirements
+  - serverless-aws-documentation
+custom:
+  documentation:
+    api:
+      swagger: "2.0"
+      info:
+        title: "Sites load timer"
+        description: "This is the API for getting time of load web pages. Based on asyncio."
+        termsOfService: "Free"
+        contact:
+          name: "Andrey Shapoval"
+          email: "shapovalandrey27@egoogle.com"
+        version: "1.0.1"
+      host: "lzmhux1fog.execute-api.us-east-1.amazonaws.com"
+      basePath: "/dev"
+      schemes: "https"
+      paths:
+        /site_load_timer:
+          post:
+            description: "Returns 'url: time' pairs. In case of invalid url returns 'url: Invalid URL'"
