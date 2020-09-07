@@ -11,21 +11,6 @@ functions:
       - http:
           method: post
           path: /site_load_timer
-          documentation:
-            summary: "Computes load time"
-            tags:
-              - "Computing time"
-            requestBody:
-              description: "There should be a list of strings (urls). for example: ['http://google.com', 'http://youtube.com', 'http://facebook.com']"
-            requestHeaders:
-              - name: "x-header"
-            methodResponses:
-              - statusCode: "200"
-                responseBody:
-                  description: "Returns 'url: time' pairs. In case of invalid url returns 'url: Invalid URL'"
-              - statusCode: "400"
-                responseBody:
-                  "application/json": "Bad request data. There should be a list of urls in POST request body."
 plugins:
   - serverless-python-requirements
   - serverless-aws-documentation
@@ -36,15 +21,36 @@ custom:
       info:
         title: "Sites load timer"
         description: "This is the API for getting time of load web pages. Based on asyncio."
-        termsOfService: "Free"
+        termsOfService: "http://swagger.io/terms/"
         contact:
           name: "Andrey Shapoval"
-          email: "shapovalandrey27@egoogle.com"
+          email: "shapovalandrey27@google.com"
         version: "1.0.1"
       host: "lzmhux1fog.execute-api.us-east-1.amazonaws.com"
       basePath: "/dev"
-      schemes: "https"
+      schemes:
+        - "https"
+        - "http"
       paths:
         /site_load_timer:
           post:
+            summary: "Compute time of loading sites"
             description: "Returns 'url: time' pairs. In case of invalid url returns 'url: Invalid URL'"
+            consumes:
+              - "application/json"
+            produces:
+              - "application/json"
+            parameters:
+              - in: "body"
+                name: "body"
+                description: "Urls that need to be tested"
+                required: true
+                schema:
+                  type: "array"
+                  items:
+                    type: "string"
+            responses:
+              "400":
+                description: "Bad request data. There should be a list of urls in POST request body."
+              "200":
+                description: "'url: time' pairs. In case of invalid url returns 'url: Invalid URL'"
